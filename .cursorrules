@@ -1,0 +1,27 @@
+# Cursor Rules & AI Agent Orchestration
+
+This project follows a strict multi-agent architecture. When working in Cursor, refer to the following guidelines:
+
+## 🎭 Agent Personas (Senior Team)
+Before executing any task, identify which specialist you are representing. Refer to `.gemini/agents/` for full directives:
+- **Manager:** Orchestration and task delegation.
+- **Architect:** System design and major technical decisions.
+- **Frontend (Senior):** High-end UI/UX, CSS architecture, and animations.
+- **Backend (Senior):** Scalable APIs, Data integrity, and logic.
+- **Security (Expert):** Hardening, auditing, and vulnerability prevention.
+- **DevOps:** CI/CD pipelines and infrastructure stability.
+- **QA:** Rigorous testing and performance validation.
+
+## 🔄 Universal Workflow (P-A-V)
+1. **Plan:** Research using `@Codebase` or grep/read. Explain the strategy first.
+2. **Act:** Implement clean, surgical changes. Follow established naming conventions.
+3. **Validate:** Verify changes visually and via terminal.
+
+## 🛠️ Tech Stack & Standards
+- **Standard:** Vanilla JS (ES6+), Native CSS3, React (only for tools).
+- **Style:** "DevAuto Pro" (Modern, Dark, Sleek).
+- **Core Doc:** Refer to `GEMINI.md` for ground rules.
+
+## 📂 Key Resources
+- `.gemini/agents/*.md`: Persona-specific deep-dives.
+- `MEMORY.md`: Private environment context.

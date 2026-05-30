@@ -58,61 +58,6 @@
     });
   });
 
-  /* ---------- Reveal on scroll ---------- */
-  const revealEls = document.querySelectorAll('.reveal');
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in');
-            io.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
-    );
-    revealEls.forEach((el) => io.observe(el));
-  } else {
-    revealEls.forEach((el) => el.classList.add('in'));
-  }
-
-  /* ---------- Animated counters ---------- */
-  function animateCount(el) {
-    const target = parseFloat(el.getAttribute('data-count')) || 0;
-    const suffix = el.getAttribute('data-suffix') || '';
-    const anim = document.body.getAttribute('data-anim');
-    if (anim === 'off') { el.textContent = target + suffix; return; }
-    const dur = 1500;
-    const start = performance.now();
-    function tick(now) {
-      const p = Math.min((now - start) / dur, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      const val = Math.round(target * eased);
-      el.textContent = val + suffix;
-      if (p < 1) requestAnimationFrame(tick);
-      else el.textContent = target + suffix;
-    }
-    requestAnimationFrame(tick);
-  }
-  const counters = document.querySelectorAll('[data-count]');
-  if ('IntersectionObserver' in window) {
-    const cio = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            animateCount(entry.target);
-            cio.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.6 }
-    );
-    counters.forEach((el) => cio.observe(el));
-  } else {
-    counters.forEach(animateCount);
-  }
-
   /* ---------- Hero terminal: reveal lines in sequence ---------- */
   function playTerminal() {
     const lines = document.querySelectorAll('#termBody .term-line');
