@@ -1,111 +1,156 @@
 /* ============================================================
-   DevAuto Pro — Tweaks island
-   Applies values to CSS variables + body data-attributes.
+   DevAuto Pro — Tweaks panel helpers
+   Defines: useTweaks, TweaksPanel, TweakSection,
+            TweakColor, TweakSelect, TweakRadio, TweakButton
    ============================================================ */
 
-const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "accent": ["#8b5cf6", "#c026d3"],
-  "anim": "rich",
-  "headFont": "'IBM Plex Mono', ui-monospace, monospace",
-  "hero": "split",
-  "cards": "outline"
-}/*EDITMODE-END*/;
+/* ---------- Hook ---------- */
+function useTweaks(defaults) {
+  const [tweaks, setTweaksState] = React.useState(defaults);
+  const setTweak = (key, value) =>
+    setTweaksState((prev) => ({ ...prev, [key]: value }));
+  return [tweaks, setTweak];
+}
 
-const ACCENT_OPTIONS = [
-  ["#8b5cf6", "#c026d3"], // violeta → magenta (default)
-  ["#7c3aed", "#a21caf"], // roxo profundo
-  ["#6366f1", "#8b5cf6"], // índigo → violeta
-  ["#a855f7", "#ec4899"], // ametista → rosa
-];
-
-const FONT_OPTIONS = [
-  { value: "'IBM Plex Mono', ui-monospace, monospace", label: "Mono (IBM Plex)" },
-  { value: "'Space Grotesk', sans-serif", label: "Grotesk" },
-  { value: "'Sora', sans-serif", label: "Sora" },
-];
-
-function DevAutoTweaks() {
-  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
-
-  // ----- apply accent colors -----
-  React.useEffect(() => {
-    const pair = Array.isArray(t.accent) ? t.accent : [t.accent, t.accent];
-    const root = document.documentElement;
-    root.style.setProperty('--accent', pair[0]);
-    root.style.setProperty('--accent-2', pair[1] || pair[0]);
-  }, [t.accent]);
-
-  // ----- heading font -----
-  React.useEffect(() => {
-    document.documentElement.style.setProperty('--font-head', t.headFont);
-  }, [t.headFont]);
-
-  // ----- body data-attributes -----
-  React.useEffect(() => { document.body.setAttribute('data-anim', t.anim); }, [t.anim]);
-  React.useEffect(() => { document.body.setAttribute('data-hero', t.hero); }, [t.hero]);
-  React.useEffect(() => { document.body.setAttribute('data-cards', t.cards); }, [t.cards]);
-
+/* ---------- Panel shell ---------- */
+function TweaksPanel({ title, children }) {
+  const [open, setOpen] = React.useState(false);
   return (
-    <TweaksPanel title="Tweaks">
-      <TweakSection label="Cor de destaque" />
-      <TweakColor
-        label="Paleta"
-        value={t.accent}
-        options={ACCENT_OPTIONS}
-        onChange={(v) => setTweak('accent', v)}
-      />
+    <div id="tweaks-panel" style={{
+      position: 'fixed', bottom: '20px', right: '20px', zIndex: 9999,
+      fontFamily: "'IBM Plex Mono', monospace", fontSize: '12px',
+    }}>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        style={{
+          background: '#8b5cf6', color: '#fff', border: 'none',
+          borderRadius: '8px', padding: '8px 14px', cursor: 'pointer',
+          fontFamily: 'inherit', fontSize: '12px', fontWeight: 600,
+        }}
+      >
+        {open ? '✕ Fechar' : '⚙ ' + (title || 'Tweaks')}
+      </button>
 
-      <TweakSection label="Tipografia" />
-      <TweakSelect
-        label="Fonte dos títulos"
-        value={t.headFont}
-        options={FONT_OPTIONS}
-        onChange={(v) => setTweak('headFont', v)}
-      />
-
-      <TweakSection label="Movimento" />
-      <TweakRadio
-        label="Animações"
-        value={t.anim}
-        options={[
-          { value: 'off', label: 'Off' },
-          { value: 'subtle', label: 'Sutil' },
-          { value: 'rich', label: 'Rico' },
-        ]}
-        onChange={(v) => setTweak('anim', v)}
-      />
-      <TweakButton label="Repetir contadores" secondary
-        onClick={() => window.__devauto && window.__devauto.replayCounters()} />
-
-      <TweakSection label="Layout" />
-      <TweakRadio
-        label="Hero"
-        value={t.hero}
-        options={[
-          { value: 'split', label: 'Split' },
-          { value: 'centered', label: 'Centro' },
-          { value: 'minimal', label: 'Clean' },
-        ]}
-        onChange={(v) => setTweak('hero', v)}
-      />
-      <TweakRadio
-        label="Cards"
-        value={t.cards}
-        options={[
-          { value: 'outline', label: 'Linha' },
-          { value: 'filled', label: 'Sólido' },
-          { value: 'gradient', label: 'Borda' },
-        ]}
-        onChange={(v) => setTweak('cards', v)}
-      />
-    </TweaksPanel>
+      {open && (
+        <div style={{
+          background: '#1a1625', border: '1px solid rgba(139,92,246,0.3)',
+          borderRadius: '12px', padding: '16px', marginTop: '8px',
+          minWidth: '220px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+          maxHeight: '80vh', overflowY: 'auto',
+        }}>
+          {children}
+        </div>
+      )}
+    </div>
   );
 }
 
-(function mountTweaks() {
-  const el = document.createElement('div');
-  el.id = 'tweaks-root';
-  el.setAttribute('data-omelette-chrome', '');
-  document.body.appendChild(el);
-  ReactDOM.createRoot(el).render(<DevAutoTweaks />);
-})();
+/* ---------- Section label ---------- */
+function TweakSection({ label }) {
+  return (
+    <div style={{
+      color: '#8b5cf6', fontWeight: 600, fontSize: '10px',
+      textTransform: 'uppercase', letterSpacing: '0.08em',
+      marginTop: '14px', marginBottom: '6px', paddingBottom: '4px',
+      borderBottom: '1px solid rgba(139,92,246,0.2)',
+    }}>
+      {label}
+    </div>
+  );
+}
+
+/* ---------- Color swatch picker ---------- */
+function TweakColor({ label, value, options, onChange }) {
+  const normalize = (v) => (Array.isArray(v) ? v[0] : v);
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+      <span style={{ color: '#c4b5fd', flex: 1 }}>{label}</span>
+      <div style={{ display: 'flex', gap: '5px' }}>
+        {options.map((opt, i) => {
+          const color = Array.isArray(opt) ? opt[0] : opt;
+          const selected = normalize(value) === normalize(opt);
+          return (
+            <button
+              key={i}
+              onClick={() => onChange(opt)}
+              title={color}
+              style={{
+                width: '20px', height: '20px', borderRadius: '50%',
+                background: color, border: selected ? '2px solid #fff' : '2px solid transparent',
+                cursor: 'pointer', padding: 0,
+              }}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Select / dropdown ---------- */
+function TweakSelect({ label, value, options, onChange }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+      <span style={{ color: '#c4b5fd', flex: 1 }}>{label}</span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        style={{
+          background: '#2d1f4e', color: '#e9d5ff', border: '1px solid rgba(139,92,246,0.4)',
+          borderRadius: '6px', padding: '4px 6px', fontFamily: 'inherit', fontSize: '11px',
+          cursor: 'pointer',
+        }}
+      >
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>{opt.label}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+/* ---------- Radio button group ---------- */
+function TweakRadio({ label, value, options, onChange }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+      <span style={{ color: '#c4b5fd', flex: 1, minWidth: '70px' }}>{label}</span>
+      <div style={{ display: 'flex', gap: '4px' }}>
+        {options.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => onChange(opt.value)}
+            style={{
+              background: value === opt.value ? '#8b5cf6' : '#2d1f4e',
+              color: value === opt.value ? '#fff' : '#c4b5fd',
+              border: '1px solid rgba(139,92,246,0.4)',
+              borderRadius: '5px', padding: '3px 8px',
+              fontFamily: 'inherit', fontSize: '11px', cursor: 'pointer',
+            }}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Action button ---------- */
+function TweakButton({ label, onClick, secondary }) {
+  return (
+    <div style={{ marginBottom: '8px' }}>
+      <button
+        onClick={onClick}
+        style={{
+          background: secondary ? 'transparent' : '#8b5cf6',
+          color: secondary ? '#c4b5fd' : '#fff',
+          border: '1px solid rgba(139,92,246,0.5)',
+          borderRadius: '6px', padding: '5px 12px', width: '100%',
+          fontFamily: 'inherit', fontSize: '11px', cursor: 'pointer',
+        }}
+      >
+        {label}
+      </button>
+    </div>
+  );
+}
