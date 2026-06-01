@@ -1,5 +1,5 @@
 /* ============================================================
-   DevAuto Pro — GSAP ScrollTrigger animations
+   Nexus Code — GSAP ScrollTrigger animations
    ============================================================ */
 (function () {
   'use strict';
@@ -57,8 +57,7 @@
      3. HERO — entrada na carga da página (sem ScrollTrigger)
   ════════════════════════════════════════════════════════════ */
   gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.12 })
-    .from('.hero-badge',    { opacity: 0, y: 18, duration: 0.52 })
-    .from('.hero .eyebrow', { opacity: 0, y: 18, duration: 0.52 }, '-=0.3')
+    .from('.hero .eyebrow', { opacity: 0, y: 18, duration: 0.52 })
     .from('.hero h1',       { opacity: 0, y: 30, duration: 0.72 }, '-=0.32')
     .from('.hero-sub',      { opacity: 0, y: 20, duration: 0.62 }, '-=0.42')
     .from('.hero-actions',  { opacity: 0, y: 18, duration: 0.6  }, '-=0.36')

@@ -1,5 +1,5 @@
 /* ============================================================
-   DevAuto Pro — Landing page
+   Nexus Code — Landing page
    Dark mode roxo · corporativo · IBM Plex Mono + Sans
    ============================================================ */
 
@@ -274,28 +274,6 @@ header.nav.scrolled {
   align-items: center;
   position: relative; z-index: 1;
 }
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 9px;
-  padding: 7px 16px 7px 10px;
-  border: 1px solid var(--border-2);
-  border-radius: 999px;
-  background: oklch(1 0 0 / .04);
-  font-family: var(--font-head);
-  font-size: 12.5px;
-  color: var(--text-mut);
-  margin-bottom: 22px;
-  backdrop-filter: blur(8px);
-}
-.hero-badge .dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: oklch(0.78 0.17 150);
-  box-shadow: 0 0 0 4px oklch(0.78 0.17 150 / .18);
-  animation: dotpulse 2.4s ease-in-out infinite;
-}
-@keyframes dotpulse {
-  0%, 100% { box-shadow: 0 0 0 4px oklch(0.78 0.17 150 / .2); }
-  50%       { box-shadow: 0 0 0 9px oklch(0.78 0.17 150 / 0); }
-}
 .hero h1 {
   font-size: clamp(38px, 5.2vw, 68px);
   margin-bottom: 22px;
@@ -429,7 +407,7 @@ header.nav.scrolled {
 /* hero layout: centered */
 body[data-hero="centered"] .hero-grid { grid-template-columns: 1fr; text-align: center; max-width: 880px; margin-inline: auto; }
 body[data-hero="centered"] .hero-sub { margin-inline: auto; }
-body[data-hero="centered"] .eyebrow, body[data-hero="centered"] .hero-badge { justify-content: center; }
+body[data-hero="centered"] .eyebrow { justify-content: center; }
 body[data-hero="centered"] .hero-actions, body[data-hero="centered"] .hero-trust { justify-content: center; }
 body[data-hero="centered"] .hero-visual { margin-top: 56px; max-width: 760px; margin-inline: auto; }
 body[data-hero="centered"] .hero-text { display: flex; flex-direction: column; align-items: center; }

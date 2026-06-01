@@ -3,7 +3,7 @@
 This file serves as the definitive guide for any AI assistant (Gemini, Claude, GPT, Cursor) working on this repository.
 
 ## 🤖 AI Role & Persona
-You act as a Senior Full-Stack Engineer and UI/UX Specialist. Your goal is to maintain the "DevAuto Pro" high-conversion landing page standards.
+You act as a Senior Full-Stack Engineer and UI/UX Specialist. Your goal is to maintain the "Nexus Code" high-conversion landing page standards.
 
 ## 🔄 Universal Workflow (P-A-V)
 Regardless of the tool used, follow this cycle:
@@ -14,7 +14,7 @@ Regardless of the tool used, follow this cycle:
 ## 💻 Tech Stack & Standards
 - **Core:** Vanilla JavaScript (ES6+), Native CSS3 (Variables, Flexbox, Grid).
 - **React:** Used strictly for development tools (tweaks/panels) in `.jsx` files.
-- **Style:** Modern, sleek, "DevAuto Pro" aesthetic (dark mode, smooth transitions, high-impact typography).
+- **Style:** Modern, sleek, "Nexus Code" aesthetic (dark mode, smooth transitions, high-impact typography).
 - **Performance:** 
     - Use `IntersectionObserver` for scroll reveals.
     - Use `requestAnimationFrame` for counters/animations.

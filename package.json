@@ -1,0 +1,25 @@
+{
+  "name": "portifolioagencia",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eduardosouuza/Agencia-Startup.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^6.3.5"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/eduardosouuza/Agencia-Startup/issues"
+  },
+  "homepage": "https://github.com/eduardosouuza/Agencia-Startup#readme"
+}

@@ -1,5 +1,5 @@
 /* ============================================================
-   DevAuto Pro — interações
+   Nexus Code — interações
    ============================================================ */
 (function () {
   'use strict';
@@ -79,14 +79,4 @@
   window.addEventListener('load', () => setTimeout(playTerminal, 300));
   // fallback if load already fired
   if (document.readyState === 'complete') setTimeout(playTerminal, 400);
-
-  /* ---------- expose a refresh hook for Tweaks (re-run counters etc.) ---------- */
-  window.__devauto = {
-    replayCounters() {
-      document.querySelectorAll('[data-count]').forEach((el) => {
-        el.textContent = '0';
-        animateCount(el);
-      });
-    },
-  };
 })();
