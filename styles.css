@@ -50,13 +50,10 @@ body[data-anim="rich"]  { --reveal-dur: .8s;   --reveal-y: 34px; }
 * { box-sizing: border-box; }
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
 }
 
 body {
   margin: 0;
-  width: 100%;
-  max-width: 100%;
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
