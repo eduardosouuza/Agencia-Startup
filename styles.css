@@ -389,11 +389,18 @@ header.nav.scrolled {
 .term-live span {
   width: 7px; height: 7px; border-radius: 50%;
   background: oklch(0.78 0.17 150);
-  animation: livepulse 2.2s ease-in-out infinite;
+  position: relative;
+}
+.term-live span::after {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: oklch(0.78 0.17 150);
+  animation: livepulse 2.2s ease-out infinite;
 }
 @keyframes livepulse {
-  0%, 100% { box-shadow: 0 0 0 0 oklch(0.78 0.17 150 / .5); }
-  50%       { box-shadow: 0 0 0 6px oklch(0.78 0.17 150 / 0); }
+  0%   { transform: scale(1);   opacity: 0.6; }
+  100% { transform: scale(3.2); opacity: 0; }
 }
 .term-body { padding: 16px 22px 20px; font-family: var(--font-head); font-size: 13.5px; line-height: 1.74; }
 .term-line { display: flex; gap: 14px; opacity: 0; transform: translateY(6px); }
@@ -818,8 +825,8 @@ footer { border-top: 1px solid var(--border); padding: 64px 0 40px; }
 .wa-float .wa-txt { font-family: var(--font-head); font-size: 14px; font-weight: 500; white-space: nowrap; opacity: 0; padding-right: 0; transition: opacity .25s, padding .25s; }
 .wa-float:hover { width: 224px; transform: translateY(-2px); }
 .wa-float:hover .wa-txt { opacity: 1; padding-right: 22px; }
-.wa-float.pulse::before { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 0 oklch(0.7 0.17 150 / .5); animation: wapulse 2.4s ease-out infinite; }
-@keyframes wapulse { 0% { box-shadow: 0 0 0 0 oklch(0.7 0.17 150 / .45); } 100% { box-shadow: 0 0 0 22px oklch(0.7 0.17 150 / 0); } }
+.wa-float.pulse::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: oklch(0.7 0.17 150 / .45); animation: wapulse 2.4s ease-out infinite; }
+@keyframes wapulse { 0% { transform: scale(1); opacity: .45; } 100% { transform: scale(1.55); opacity: 0; } }
 
 /* ---------- Reveal animation ---------- */
 .reveal { opacity: 0; transform: translateY(var(--reveal-y)); transition: opacity var(--reveal-dur) cubic-bezier(.2,.7,.3,1), transform var(--reveal-dur) cubic-bezier(.2,.7,.3,1); will-change: opacity, transform; }
