@@ -35,6 +35,57 @@
     );
   }
 
+  /* ---------- Work carousel ---------- */
+  const workCarousel = document.querySelector('.work-carousel');
+  if (workCarousel) {
+    const slides = Array.from(workCarousel.querySelectorAll('[data-work-slide]'));
+    const dots = Array.from(workCarousel.querySelectorAll('.work-dots button'));
+    const prev = workCarousel.querySelector('.work-prev');
+    const next = workCarousel.querySelector('.work-next');
+    let current = 0;
+
+    const positionClass = (offset) => {
+      if (offset === 0) return 'is-active';
+      if (offset === 1) return 'is-next';
+      if (offset === -1) return 'is-prev';
+      if (offset === 2) return 'is-far-next';
+      if (offset === -2) return 'is-far-prev';
+      return '';
+    };
+
+    const renderWork = () => {
+      slides.forEach((slide, index) => {
+        const rawOffset = index - current;
+        const offset = ((rawOffset + slides.length + Math.floor(slides.length / 2)) % slides.length) - Math.floor(slides.length / 2);
+
+        slide.classList.remove('is-active', 'is-prev', 'is-next', 'is-far-prev', 'is-far-next');
+        const nextClass = positionClass(offset);
+        if (nextClass) slide.classList.add(nextClass);
+        slide.setAttribute('aria-hidden', offset === 0 ? 'false' : 'true');
+      });
+
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('is-active', index === current);
+      });
+    };
+
+    const goToWork = (index) => {
+      current = (index + slides.length) % slides.length;
+      renderWork();
+    };
+
+    prev?.addEventListener('click', () => goToWork(current - 1));
+    next?.addEventListener('click', () => goToWork(current + 1));
+    dots.forEach((dot, index) => dot.addEventListener('click', () => goToWork(index)));
+
+    workCarousel.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') goToWork(current - 1);
+      if (event.key === 'ArrowRight') goToWork(current + 1);
+    });
+
+    renderWork();
+  }
+
   /* ---------- FAQ accordion ---------- */
   document.querySelectorAll('.faq-item').forEach((item) => {
     const q = item.querySelector('.faq-q');

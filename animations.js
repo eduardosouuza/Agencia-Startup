@@ -40,11 +40,12 @@
      2. ESTADO INICIAL — esconde elementos que serão animados
         pelo scroll (hero fica de fora — tem sua própria timeline)
   ════════════════════════════════════════════════════════════ */
-  var HEADS = '#servicos .section-head, #processo .section-head, ' +
+  var HEADS = '#trabalhos .work-head, #servicos .section-head, #processo .section-head, ' +
               '#resultados .section-head, #depoimentos .section-head, #faq .section-head';
 
   gsap.set('.logos-inner',            { opacity: 0, y: 28 });
   gsap.set(HEADS,                     { opacity: 0, y: 38 });
+  gsap.set('.work-carousel',          { opacity: 0, y: 48, scale: 0.98 });
   gsap.set('.svc-card',               { opacity: 0, y: 54 });
   gsap.set('.step',                   { opacity: 0, x: -30, y: 18 });
   gsap.set('.stat',                   { opacity: 0, y: 34 });
@@ -83,6 +84,16 @@
   gsap.to('.logos-inner', {
     opacity: 1, y: 0, duration: 0.65, ease: 'power3.out',
     scrollTrigger: { trigger: '.logos', start: 'top 88%' },
+  });
+
+  /* TRABALHOS */
+  gsap.to('#trabalhos .work-head', {
+    opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
+    scrollTrigger: { trigger: '#trabalhos .work-head', start: 'top 82%' },
+  });
+  gsap.to('.work-carousel', {
+    opacity: 1, y: 0, scale: 1, duration: 0.75, ease: 'power3.out',
+    scrollTrigger: { trigger: '.work-carousel', start: 'top 78%' },
   });
 
   /* ════════════════════════════════════════════════════════════
