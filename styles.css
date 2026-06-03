@@ -546,6 +546,27 @@ body[data-hero="minimal"] .hero h1 { font-size: clamp(42px, 8vw, 92px); }
   filter: saturate(1.05) contrast(1.02);
   transform: translateZ(0);
 }
+
+/* placeholders CSS-only (sem imagem) */
+.work-placeholder {
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+}
+.work-placeholder::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(to right, oklch(1 0 0 / .04) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(1 0 0 / .04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  border-radius: inherit;
+}
+.wp-1 { background: linear-gradient(135deg, oklch(0.18 0.06 290), oklch(0.28 0.12 280)); }
+.wp-2 { background: linear-gradient(135deg, oklch(0.18 0.06 170), oklch(0.28 0.10 155)); }
+.wp-3 { background: linear-gradient(135deg, oklch(0.18 0.06 230), oklch(0.28 0.11 220)); }
+.wp-4 { background: linear-gradient(135deg, oklch(0.20 0.08 50),  oklch(0.28 0.10 40)); }
+.wp-5 { background: linear-gradient(135deg, oklch(0.18 0.06 340), oklch(0.28 0.11 320)); }
 .work-slide::after {
   content: "";
   position: absolute;
@@ -927,4 +948,33 @@ footer { border-top: 1px solid var(--border); padding: 64px 0 40px; }
     bottom: 18px;
   }
   .work-dots { bottom: 8px; }
+}
+
+/* ── Mobile performance ───────────────────────────────────────
+   Remove operações caras de paint que devastam o score mobile
+──────────────────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  /* filter:blur é o maior custo de paint no mobile — remove */
+  .hero-orb {
+    filter: none;
+    opacity: 0.35;
+    animation: none;
+  }
+  .hero-orb.ho-1 { width: 260px; height: 260px; right: -60px; top: -60px; }
+  .hero-orb.ho-2 { width: 200px; height: 200px; left: -60px; bottom: -40px; }
+
+  /* Glow atrás do terminal — remove no mobile */
+  .visual-glow { display: none; }
+
+  /* Para animações de chips e cursor — menos frames no mobile */
+  .float-chip { animation: none; }
+  .term-cursor { animation: none; }
+  .term::before { display: none; }
+
+  /* Paralaxe dos orbs via GSAP — desabilitado em animations.js */
+}
+
+/* Desativa body::before/after (gradientes ambient) no mobile fraco */
+@media (max-width: 480px) {
+  body::before, body::after { display: none; }
 }

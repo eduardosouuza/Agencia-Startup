@@ -17,6 +17,15 @@
 
   gsap.registerPlugin(ScrollTrigger);
 
+  /* -- Mobile: skip GSAP, exibe tudo via CSS imediatamente -- */
+  if (window.innerWidth < 860) {
+    allReveals.forEach(function (el) { el.classList.add('in'); });
+    document.querySelectorAll('[data-count]').forEach(function (el) {
+      el.textContent = (el.getAttribute('data-count') || '0') + (el.getAttribute('data-suffix') || '');
+    });
+    return;
+  }
+
   /* -- Respeita prefers-reduced-motion e data-anim="off" -- */
   if (
     window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
