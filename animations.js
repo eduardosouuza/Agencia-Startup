@@ -86,38 +86,58 @@
     scrollTrigger: { trigger: '.logos', start: 'top 88%' },
   });
 
-  /* TRABALHOS */
-  gsap.to('#trabalhos .work-head', {
-    opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
-    scrollTrigger: { trigger: '#trabalhos .work-head', start: 'top 82%' },
-  });
-  gsap.to('.work-carousel', {
-    opacity: 1, y: 0, scale: 1, duration: 0.75, ease: 'power3.out',
-    scrollTrigger: { trigger: '.work-carousel', start: 'top 78%' },
+  /* ════════════════════════════════════════════════════════════
+     DYNAMISM: HIGH-IMPACT SECTION TRANSITIONS
+  ════════════════════════════════════════════════════════════ */
+  const sections = document.querySelectorAll('section, footer, .logos');
+  sections.forEach(sec => {
+    const reveals = sec.querySelectorAll('.reveal');
+    
+    if (reveals.length > 0) {
+      // RESET inicial mais forte para o GSAP
+      gsap.set(reveals, { opacity: 0, y: 60, scale: 0.96 });
+
+      gsap.to(reveals, {
+        opacity: 1, 
+        y: 0, 
+        scale: 1,
+        duration: 1.4,
+        stagger: 0.15,
+        ease: 'power4.out', // Mais agressivo e limpo
+        scrollTrigger: {
+          trigger: sec,
+          start: 'top 70%',
+          toggleActions: 'play none none none'
+        }
+      });
+    }
+
+    // Parallax de seção mais acentuado (Clean overlap)
+    gsap.fromTo(sec, 
+      { y: 40 },
+      {
+        y: -40,
+        scrollTrigger: {
+          trigger: sec,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true
+        }
+      }
+    );
   });
 
-  /* ════════════════════════════════════════════════════════════
-     6. SERVIÇOS
-  ════════════════════════════════════════════════════════════ */
-  gsap.to('#servicos .section-head', {
-    opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
-    scrollTrigger: { trigger: '#servicos .section-head', start: 'top 82%' },
-  });
-  gsap.to('.svc-card', {
-    opacity: 1, y: 0, duration: 0.65, stagger: 0.09, ease: 'power3.out',
-    scrollTrigger: { trigger: '.svc-grid', start: 'top 78%' },
-  });
-
-  /* ════════════════════════════════════════════════════════════
-     7. PROCESSO
-  ════════════════════════════════════════════════════════════ */
-  gsap.to('#processo .section-head', {
-    opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
-    scrollTrigger: { trigger: '#processo .section-head', start: 'top 82%' },
-  });
-  gsap.to('.step', {
-    opacity: 1, y: 0, x: 0, duration: 0.65, stagger: 0.13, ease: 'power3.out',
-    scrollTrigger: { trigger: '.steps', start: 'top 78%' },
+  // Efeito de 'Blur' e Escurecimento no scroll (Foco na seção ativa)
+  document.querySelectorAll('section').forEach(sec => {
+    gsap.to(sec, {
+      filter: 'brightness(0.7) blur(2px)',
+      scrollTrigger: {
+        trigger: sec,
+        start: 'bottom 20%',
+        end: 'bottom 0%',
+        scrub: true
+      }
+    });
   });
 
   /* ════════════════════════════════════════════════════════════
