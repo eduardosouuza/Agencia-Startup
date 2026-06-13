@@ -103,34 +103,35 @@
   const runPreloader = () => {
     let perc = 0;
     
-    // Forced fallback
+    // Safety timeout: force hide preloader if it gets stuck
     const safetySwitch = setTimeout(() => {
       if (preloader && preloader.style.display !== 'none') {
         console.log('Safety switch triggered');
         startHeroAnimation();
       }
-    }, 4500);
+    }, 6000);
 
-    // Initial state for all reveals
+    // Pre-initialize ALL reveals: hide them initially for GSAP to reveal them
     document.querySelectorAll('.reveal').forEach(el => {
       el.classList.add('in');
       el.style.transition = 'none';
-      // If we are not on mobile, hide them for GSAP
-      if (!isMobile) el.style.opacity = '1'; 
+      if (!isMobile) el.style.opacity = '0'; 
     });
 
     const interval = setInterval(() => {
-      // Fake loading progress
-      perc += Math.floor(Math.random() * 20) + 5;
+      // Slower, more granular progress for premium feel
+      perc += Math.floor(Math.random() * 3) + 1; 
+      
       if (perc >= 100) {
         perc = 100;
         clearInterval(interval);
         clearTimeout(safetySwitch);
-        setTimeout(startHeroAnimation, 300);
+        // Small delay before hero starts for smooth transition
+        setTimeout(startHeroAnimation, 500);
       }
       if (preloaderBar) preloaderBar.style.width = perc + '%';
       if (preloaderPerc) preloaderPerc.innerText = perc + '%';
-    }, 40);
+    }, 45); // Slower interval
   };
 
   /* -- Hero Animation -- */
