@@ -165,32 +165,48 @@
     });
 
     // Entrance sequence
-    tl.from('.hero .eyebrow', { opacity: 0, y: 30, duration: 1 }, '-=0.6')
-      .from('.hero h1 .word', { 
+    const hasSub = document.querySelector('.hero-sub');
+    const hasVisual = document.querySelector('.hero-visual');
+    const hasChips = document.querySelector('.float-chip');
+    const hasScroll = document.querySelector('.hero-scroll');
+
+    tl.from('.hero .eyebrow', { opacity: 0, y: 30, duration: 1 }, '-=0.6');
+    
+    if (document.querySelector('.hero h1 .word')) {
+      tl.from('.hero h1 .word', { 
         yPercent: 100, 
         opacity: 0,
         duration: 1.2, 
         stagger: 0.05,
         ease: 'expo.out'
-      }, '-=0.9')
-      .from('.hero-sub', { opacity: 0, y: 20, duration: 1 }, '-=1.1')
-      .from('.hero-actions', { opacity: 0, y: 20, duration: 1 }, '-=1')
-      .from('.hero-visual', { 
+      }, '-=0.9');
+    }
+
+    if (hasSub) tl.from('.hero-sub', { opacity: 0, y: 20, duration: 1 }, '-=1.1');
+    tl.from('.hero-actions', { opacity: 0, y: 20, duration: 1 }, '-=1');
+    
+    if (hasVisual) {
+      tl.from('.hero-visual', { 
         opacity: 0, 
         scale: 0.95, 
         y: 40, 
         duration: 1.5,
         ease: 'expo.out'
-      }, '-=1.2')
-      .from('.float-chip', { 
+      }, '-=1.2');
+    }
+
+    if (hasChips) {
+      tl.from('.float-chip', { 
         opacity: 0, 
         scale: 0.7, 
         y: 15,
         stagger: 0.12, 
         duration: 1,
         ease: 'back.out(1.5)'
-      }, '-=1.1')
-      .from('.hero-scroll', { opacity: 0, y: -15, duration: 0.8 }, '-=0.5');
+      }, '-=1.1');
+    }
+
+    if (hasScroll) tl.from('.hero-scroll', { opacity: 0, y: -15, duration: 0.8 }, '-=0.5');
   };
 
   /* -- Scroll Animations -- */
