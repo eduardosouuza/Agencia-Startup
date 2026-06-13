@@ -8,17 +8,22 @@
   // State flags to prevent double initialization
   let isInitialized = false;
 
-  /* -- Check dependencies -- */
-  const checkDependencies = () => {
-    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
-      console.warn('GSAP or ScrollTrigger not found. Falling back to CSS.');
+  /* -- Check dependencies with retry mechanism -- */
+  const checkDependencies = (callback, retries = 10) => {
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      gsap.registerPlugin(ScrollTrigger);
+      callback();
+      return;
+    }
+
+    if (retries > 0) {
+      setTimeout(() => checkDependencies(callback, retries - 1), 250);
+    } else {
+      console.warn('GSAP or ScrollTrigger not found after retries. Falling back to CSS.');
       document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
       const preloader = document.getElementById('preloader');
       if (preloader) preloader.style.display = 'none';
-      return false;
     }
-    gsap.registerPlugin(ScrollTrigger);
-    return true;
   };
 
   /* -- Global Variables -- */
@@ -109,7 +114,7 @@
         console.log('Safety switch triggered');
         startHeroAnimation();
       }
-    }, 6000);
+    }, 8000);
 
     // Pre-initialize ALL reveals: hide them initially for GSAP to reveal them
     document.querySelectorAll('.reveal').forEach(el => {
@@ -127,7 +132,7 @@
         clearInterval(interval);
         clearTimeout(safetySwitch);
         // Small delay before hero starts for smooth transition
-        setTimeout(startHeroAnimation, 500);
+        setTimeout(startHeroAnimation, 600);
       }
       if (preloaderBar) preloaderBar.style.width = perc + '%';
       if (preloaderPerc) preloaderPerc.innerText = perc + '%';
@@ -151,7 +156,7 @@
 
     tl.to(preloader, {
       yPercent: -100,
-      duration: 1.2,
+      duration: 1.4,
       ease: 'expo.inOut',
       onComplete: () => {
         preloader.style.display = 'none';
@@ -165,27 +170,27 @@
         yPercent: 100, 
         opacity: 0,
         duration: 1.2, 
-        stagger: 0.04,
+        stagger: 0.05,
         ease: 'expo.out'
       }, '-=0.9')
-      .from('.hero-sub', { opacity: 0, y: 20, duration: 1 }, '-=1')
-      .from('.hero-actions', { opacity: 0, y: 20, duration: 1 }, '-=0.9')
+      .from('.hero-sub', { opacity: 0, y: 20, duration: 1 }, '-=1.1')
+      .from('.hero-actions', { opacity: 0, y: 20, duration: 1 }, '-=1')
       .from('.hero-visual', { 
         opacity: 0, 
         scale: 0.95, 
         y: 40, 
-        duration: 1.4,
+        duration: 1.5,
         ease: 'expo.out'
-      }, '-=1.1')
+      }, '-=1.2')
       .from('.float-chip', { 
         opacity: 0, 
         scale: 0.7, 
         y: 15,
-        stagger: 0.1, 
-        duration: 0.8,
+        stagger: 0.12, 
+        duration: 1,
         ease: 'back.out(1.5)'
-      }, '-=1')
-      .from('.hero-scroll', { opacity: 0, y: -15, duration: 0.6 }, '-=0.4');
+      }, '-=1.1')
+      .from('.hero-scroll', { opacity: 0, y: -15, duration: 0.8 }, '-=0.5');
   };
 
   /* -- Scroll Animations -- */
@@ -269,11 +274,14 @@
     if (isInitialized) return;
     isInitialized = true;
 
-    if (!checkDependencies()) return;
-
-    splitText('.hero h1');
-    initCursor();
+    // Start preloader visually immediately
     runPreloader();
+
+    // Check for dependencies with retry mechanism
+    checkDependencies(() => {
+      splitText('.hero h1');
+      initCursor();
+    });
   };
 
   // Run on load or immediately if already loaded
