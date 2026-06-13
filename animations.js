@@ -1,19 +1,25 @@
 /* ============================================================
-   Nexus Code — Advanced Awwwards-style Animations
-   Using GSAP + ScrollTrigger
+   Nexus Code — Advanced Awwwards-style Experience
+   Stabilized for Production Deployment
    ============================================================ */
 (function () {
   'use strict';
 
-  /* -- Check dependencies -- */
-  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
-    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
-    const preloader = document.getElementById('preloader');
-    if (preloader) preloader.style.display = 'none';
-    return;
-  }
+  // State flags to prevent double initialization
+  let isInitialized = false;
 
-  gsap.registerPlugin(ScrollTrigger);
+  /* -- Check dependencies -- */
+  const checkDependencies = () => {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+      console.warn('GSAP or ScrollTrigger not found. Falling back to CSS.');
+      document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+      const preloader = document.getElementById('preloader');
+      if (preloader) preloader.style.display = 'none';
+      return false;
+    }
+    gsap.registerPlugin(ScrollTrigger);
+    return true;
+  };
 
   /* -- Global Variables -- */
   const isMobile = window.innerWidth < 860;
@@ -25,6 +31,10 @@
   const initCursor = () => {
     if (isMobile) return;
     
+    // Cleanup if already exists
+    const oldCursor = document.querySelector('.cursor');
+    if (oldCursor) oldCursor.remove();
+
     const cursor = document.createElement('div');
     cursor.className = 'cursor';
     document.body.appendChild(cursor);
@@ -32,21 +42,23 @@
     let mouseX = 0, mouseY = 0;
     let cursorX = 0, cursorY = 0;
 
-    window.addEventListener('mousemove', (e) => {
+    const onMouseMove = (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-    });
+    };
+    window.addEventListener('mousemove', onMouseMove);
 
-    // Smooth cursor movement
-    gsap.ticker.add(() => {
+    // Smooth ticker for cursor
+    const tickerFunc = () => {
       const dt = 1.0 - Math.pow(1.0 - 0.2, gsap.ticker.deltaRatio());
       cursorX += (mouseX - cursorX) * dt;
       cursorY += (mouseY - cursorY) * dt;
       gsap.set(cursor, { x: cursorX, y: cursorY });
-    });
+    };
+    gsap.ticker.add(tickerFunc);
 
     // Magnetic effect
-    const magneticElements = document.querySelectorAll('.btn, .svc-ico, .brand, .nav-links a');
+    const magneticElements = document.querySelectorAll('.btn, .svc-ico, .brand, .nav-links a, .wa-float');
     magneticElements.forEach(el => {
       el.addEventListener('mousemove', (e) => {
         const rect = el.getBoundingClientRect();
@@ -61,56 +73,64 @@
       });
     });
 
-    // Hover states
-    const hoverElements = document.querySelectorAll('a, button, .svc-card, .work-slide, .step');
-    hoverElements.forEach(el => {
-      el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-      el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-      el.addEventListener('mousedown', () => cursor.classList.add('click'));
-      el.addEventListener('mouseup', () => cursor.classList.remove('click'));
+    // Hover states for cursor
+    const hoverSelectors = 'a, button, .svc-card, .work-slide, .step, .faq-q, .wa-float';
+    document.addEventListener('mouseover', (e) => {
+      if (e.target.closest(hoverSelectors)) {
+        cursor.classList.add('hover');
+      } else {
+        cursor.classList.remove('hover');
+      }
     });
+    document.addEventListener('mousedown', () => cursor.classList.add('click'));
+    document.addEventListener('mouseup', () => cursor.classList.remove('click'));
   };
 
-  /* -- Split Text Helper (Manual) -- */
+  /* -- Split Text Helper -- */
   const splitText = (selector) => {
     const el = document.querySelector(selector);
-    if (!el) return;
-    const text = el.innerText;
+    if (!el || el.dataset.split === 'true') return;
+    const text = el.innerText.trim();
     el.innerHTML = text.split(' ').map(word => 
       `<span class="word-wrapper" style="overflow:hidden; display:inline-block;">
         <span class="word" style="display:inline-block;">${word}</span>
       </span>`
     ).join(' ');
+    el.dataset.split = 'true';
   };
 
   /* -- Preloader Logic -- */
   const runPreloader = () => {
     let perc = 0;
     
-    // Safety timeout: force hide preloader if it gets stuck
+    // Forced fallback
     const safetySwitch = setTimeout(() => {
       if (preloader && preloader.style.display !== 'none') {
+        console.log('Safety switch triggered');
         startHeroAnimation();
       }
-    }, 5000);
+    }, 4500);
 
-    // Pre-initialize ALL reveals so they are ready for GSAP
+    // Initial state for all reveals
     document.querySelectorAll('.reveal').forEach(el => {
       el.classList.add('in');
       el.style.transition = 'none';
+      // If we are not on mobile, hide them for GSAP
+      if (!isMobile) el.style.opacity = '1'; 
     });
 
     const interval = setInterval(() => {
-      perc += Math.floor(Math.random() * 15) + 5;
+      // Fake loading progress
+      perc += Math.floor(Math.random() * 20) + 5;
       if (perc >= 100) {
         perc = 100;
         clearInterval(interval);
         clearTimeout(safetySwitch);
-        setTimeout(startHeroAnimation, 200);
+        setTimeout(startHeroAnimation, 300);
       }
       if (preloaderBar) preloaderBar.style.width = perc + '%';
       if (preloaderPerc) preloaderPerc.innerText = perc + '%';
-    }, 30);
+    }, 40);
   };
 
   /* -- Hero Animation -- */
@@ -124,14 +144,13 @@
         initScrollAnimations();
       },
       onComplete: () => {
-        // Refresh ScrollTrigger to ensure all positions are calculated correctly
         ScrollTrigger.refresh();
       }
     });
 
     tl.to(preloader, {
       yPercent: -100,
-      duration: 1.4,
+      duration: 1.2,
       ease: 'expo.inOut',
       onComplete: () => {
         preloader.style.display = 'none';
@@ -139,66 +158,68 @@
       }
     });
 
-    // Initial Hero Entrance (staggered with preloader exit)
-    tl.from('.hero .eyebrow', { opacity: 0, y: 30, duration: 1 }, '-=0.8')
+    // Entrance sequence
+    tl.from('.hero .eyebrow', { opacity: 0, y: 30, duration: 1 }, '-=0.6')
       .from('.hero h1 .word', { 
         yPercent: 100, 
         opacity: 0,
         duration: 1.2, 
         stagger: 0.04,
         ease: 'expo.out'
-      }, '-=1')
+      }, '-=0.9')
       .from('.hero-sub', { opacity: 0, y: 20, duration: 1 }, '-=1')
       .from('.hero-actions', { opacity: 0, y: 20, duration: 1 }, '-=0.9')
       .from('.hero-visual', { 
         opacity: 0, 
-        scale: 0.92, 
-        y: 50, 
-        duration: 1.5,
+        scale: 0.95, 
+        y: 40, 
+        duration: 1.4,
         ease: 'expo.out'
-      }, '-=1.2')
+      }, '-=1.1')
       .from('.float-chip', { 
         opacity: 0, 
-        scale: 0.5, 
-        y: 20,
-        stagger: 0.15, 
-        duration: 1,
-        ease: 'back.out(1.7)'
-      }, '-=1.1')
-      .from('.hero-scroll', { opacity: 0, y: -20, duration: 0.8 }, '-=0.6');
+        scale: 0.7, 
+        y: 15,
+        stagger: 0.1, 
+        duration: 0.8,
+        ease: 'back.out(1.5)'
+      }, '-=1')
+      .from('.hero-scroll', { opacity: 0, y: -15, duration: 0.6 }, '-=0.4');
   };
 
   /* -- Scroll Animations -- */
   const initScrollAnimations = () => {
     if (isMobile) return;
 
-    // Section Reveals
+    // Refresh triggers to ensure correct positions
+    ScrollTrigger.refresh();
+
     const sections = document.querySelectorAll('section, footer, .logos');
     sections.forEach(sec => {
-      // Find reveals that are NOT in the hero (hero has its own timeline)
+      // Only reveals not in Hero
       const reveals = Array.from(sec.querySelectorAll('.reveal')).filter(el => !el.closest('.hero'));
       
       if (reveals.length > 0) {
         gsap.from(reveals, {
           opacity: 0,
-          y: 70,
-          scale: 0.94,
-          duration: 1.4,
-          stagger: 0.12,
-          ease: 'power4.out',
+          y: 50,
+          scale: 0.96,
+          duration: 1.2,
+          stagger: 0.1,
+          ease: 'power3.out',
           scrollTrigger: {
             trigger: sec,
-            start: 'top 82%',
+            start: 'top 85%',
             toggleActions: 'play none none none'
           }
         });
       }
 
-      // Parallax effect on backgrounds or specific images
-      const parallaxImg = sec.querySelector('img');
-      if (parallaxImg) {
-        gsap.to(parallaxImg, {
-          y: -30,
+      // Smooth parallax for images
+      const img = sec.querySelector('img');
+      if (img && !sec.classList.contains('work-section')) {
+        gsap.to(img, {
+          y: -40,
           scrollTrigger: {
             trigger: sec,
             start: 'top bottom',
@@ -209,7 +230,7 @@
       }
     });
 
-    // Special: Counter animation
+    // Counter animation logic
     document.querySelectorAll('[data-count]').forEach(el => {
       const target = parseFloat(el.getAttribute('data-count')) || 0;
       const suffix = el.getAttribute('data-suffix') || '';
@@ -221,35 +242,44 @@
         onEnter: () => {
           gsap.to(obj, {
             val: target,
-            duration: 2,
+            duration: 2.5,
             ease: 'power2.out',
-            onUpdate: () => el.innerText = Math.round(obj.val) + suffix
+            onUpdate: () => {
+              el.innerText = Math.round(obj.val) + suffix;
+            }
           });
         }
       });
     });
 
-    // Hero Orbs Parallax
+    // Floating parallax for hero orbs
     gsap.to('.hero-orb.ho-1', {
-      y: -100,
-      scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1.5 }
+      y: -120,
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1 }
     });
     gsap.to('.hero-orb.ho-2', {
-      y: 100,
-      scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 2 }
+      y: 120,
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1.2 }
     });
   };
 
-  /* -- Start Everything -- */
+  /* -- Entry Point -- */
   const init = () => {
+    if (isInitialized) return;
+    isInitialized = true;
+
+    if (!checkDependencies()) return;
+
     splitText('.hero h1');
     initCursor();
     runPreloader();
   };
 
-  if (document.readyState === 'loading') {
-    window.addEventListener('DOMContentLoaded', init);
-  } else {
+  // Run on load or immediately if already loaded
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
     init();
+  } else {
+    window.addEventListener('load', init);
   }
+
 })();
