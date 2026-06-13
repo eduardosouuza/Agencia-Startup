@@ -123,11 +123,12 @@
         line.style.transition = 'opacity .4s ease, transform .4s ease';
         line.style.opacity = 1;
         line.style.transform = 'none';
-      }, 600 + i * 260);
+      }, 200 + i * 260);
     });
   }
-  // kick off after fonts/layout settle
-  window.addEventListener('load', () => setTimeout(playTerminal, 300));
-  // fallback if load already fired
-  if (document.readyState === 'complete') setTimeout(playTerminal, 400);
+  
+  window.addEventListener('heroAnimated', playTerminal);
+  
+  // Fallback se algo falhar
+  window.addEventListener('load', () => setTimeout(playTerminal, 8000));
 })();
