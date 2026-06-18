@@ -20,9 +20,16 @@
       setTimeout(() => checkDependencies(callback, retries - 1), 250);
     } else {
       console.warn('GSAP or ScrollTrigger not found after retries. Falling back to CSS.');
-      document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+      document.querySelectorAll('.reveal').forEach(el => {
+        el.classList.add('in');
+        el.style.opacity = '1';
+        el.style.visibility = 'visible';
+      });
       const preloader = document.getElementById('preloader');
-      if (preloader) preloader.style.display = 'none';
+      if (preloader) {
+        preloader.style.opacity = '0';
+        setTimeout(() => { preloader.style.display = 'none'; }, 500);
+      }
     }
   };
 
@@ -120,23 +127,21 @@
     document.querySelectorAll('.reveal').forEach(el => {
       el.classList.add('in');
       el.style.transition = 'none';
-      if (!isMobile) el.style.opacity = '0'; 
+      // Não forçamos opacity 0 via inline style aqui, deixamos o GSAP lidar com o estado inicial
     });
 
     const interval = setInterval(() => {
-      // Slower, more granular progress for premium feel
-      perc += Math.floor(Math.random() * 3) + 1; 
+      perc += Math.floor(Math.random() * 5) + 2; 
       
       if (perc >= 100) {
         perc = 100;
         clearInterval(interval);
         clearTimeout(safetySwitch);
-        // Small delay before hero starts for smooth transition
-        setTimeout(startHeroAnimation, 600);
+        setTimeout(startHeroAnimation, 300);
       }
       if (preloaderBar) preloaderBar.style.width = perc + '%';
       if (preloaderPerc) preloaderPerc.innerText = perc + '%';
-    }, 45); // Slower interval
+    }, 30);
   };
 
   /* -- Hero Animation -- */
@@ -145,7 +150,7 @@
     preloader.dataset.started = 'true';
 
     const tl = gsap.timeline({ 
-      defaults: { ease: 'expo.out' },
+      defaults: { ease: 'expo.out', duration: 1.2 },
       onStart: () => {
         initScrollAnimations();
       },
@@ -154,9 +159,10 @@
       }
     });
 
+    // Move preloader out
     tl.to(preloader, {
       yPercent: -100,
-      duration: 1.4,
+      duration: 1.2,
       ease: 'expo.inOut',
       onComplete: () => {
         preloader.style.display = 'none';
@@ -164,49 +170,27 @@
       }
     });
 
-    // Entrance sequence
-    const hasSub = document.querySelector('.hero-sub');
-    const hasVisual = document.querySelector('.hero-visual');
-    const hasChips = document.querySelector('.float-chip');
-    const hasScroll = document.querySelector('.hero-scroll');
+    // Entrance sequence - Use .from with clear initial states
+    // Garantimos que os elementos estão visíveis antes de animar 'from'
+    gsap.set('.hero .reveal', { opacity: 1, visibility: 'visible' });
 
-    tl.from('.hero .eyebrow', { opacity: 0, y: 30, duration: 1 }, '-=0.6');
+    tl.from('.hero .eyebrow', { opacity: 0, y: 30 }, '-=0.6');
     
     if (document.querySelector('.hero h1 .word')) {
       tl.from('.hero h1 .word', { 
         yPercent: 100, 
         opacity: 0,
-        duration: 1.2, 
-        stagger: 0.05,
-        ease: 'expo.out'
+        stagger: 0.05
       }, '-=0.9');
+    } else {
+      tl.from('.hero h1', { opacity: 0, y: 30 }, '-=0.9');
     }
 
-    if (hasSub) tl.from('.hero-sub', { opacity: 0, y: 20, duration: 1 }, '-=1.1');
-    tl.from('.hero-actions', { opacity: 0, y: 20, duration: 1 }, '-=1');
-    
-    if (hasVisual) {
-      tl.from('.hero-visual', { 
-        opacity: 0, 
-        scale: 0.95, 
-        y: 40, 
-        duration: 1.5,
-        ease: 'expo.out'
-      }, '-=1.2');
-    }
-
-    if (hasChips) {
-      tl.from('.float-chip', { 
-        opacity: 0, 
-        scale: 0.7, 
-        y: 15,
-        stagger: 0.12, 
-        duration: 1,
-        ease: 'back.out(1.5)'
-      }, '-=1.1');
-    }
-
-    if (hasScroll) tl.from('.hero-scroll', { opacity: 0, y: -15, duration: 0.8 }, '-=0.5');
+    tl.from('.hero-sub', { opacity: 0, y: 20 }, '-=1.1');
+    tl.from('.hero-actions', { opacity: 0, y: 20 }, '-=1');
+    tl.from('.hero-visual', { opacity: 0, scale: 0.95, y: 40 }, '-=1.2');
+    tl.from('.float-chip', { opacity: 0, scale: 0.7, y: 15, stagger: 0.1 }, '-=1.1');
+    tl.from('.hero-scroll', { opacity: 0, y: -15, duration: 0.8 }, '-=0.5');
   };
 
   /* -- Scroll Animations -- */

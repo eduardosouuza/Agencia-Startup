@@ -17,7 +17,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "vite": "^6.3.5"
+    "vite": "^6.4.3"
   },
   "type": "commonjs",
   "bugs": {
