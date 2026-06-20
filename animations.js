@@ -69,22 +69,6 @@
     };
     gsap.ticker.add(tickerFunc);
 
-    // Magnetic effect
-    const magneticElements = document.querySelectorAll('.btn, .svc-ico, .brand, .nav-links a, .wa-float');
-    magneticElements.forEach(el => {
-      el.addEventListener('mousemove', (e) => {
-        const rect = el.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const moveX = (e.clientX - centerX) * 0.3;
-        const moveY = (e.clientY - centerY) * 0.3;
-        gsap.to(el, { x: moveX, y: moveY, duration: 0.3, ease: 'power2.out' });
-      });
-      el.addEventListener('mouseleave', () => {
-        gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' });
-      });
-    });
-
     // Hover states for cursor
     const hoverSelectors = 'a, button, .svc-card, .work-slide, .step, .faq-q, .wa-float';
     document.addEventListener('mouseover', (e) => {
@@ -195,6 +179,28 @@
 
   /* -- Scroll Animations -- */
   const initScrollAnimations = () => {
+    // Counter animation logic (runs on both mobile and desktop)
+    document.querySelectorAll('[data-count]').forEach(el => {
+      const target = parseFloat(el.getAttribute('data-count')) || 0;
+      const suffix = el.getAttribute('data-suffix') || '';
+      const obj = { val: 0 };
+      
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top 90%',
+        onEnter: () => {
+          gsap.to(obj, {
+            val: target,
+            duration: 2.5,
+            ease: 'power2.out',
+            onUpdate: () => {
+              el.innerText = Math.round(obj.val) + suffix;
+            }
+          });
+        }
+      });
+    });
+
     if (isMobile) return;
 
     // Refresh triggers to ensure correct positions
@@ -234,28 +240,6 @@
           }
         });
       }
-    });
-
-    // Counter animation logic
-    document.querySelectorAll('[data-count]').forEach(el => {
-      const target = parseFloat(el.getAttribute('data-count')) || 0;
-      const suffix = el.getAttribute('data-suffix') || '';
-      const obj = { val: 0 };
-      
-      ScrollTrigger.create({
-        trigger: el,
-        start: 'top 90%',
-        onEnter: () => {
-          gsap.to(obj, {
-            val: target,
-            duration: 2.5,
-            ease: 'power2.out',
-            onUpdate: () => {
-              el.innerText = Math.round(obj.val) + suffix;
-            }
-          });
-        }
-      });
     });
 
     // Floating parallax for hero orbs

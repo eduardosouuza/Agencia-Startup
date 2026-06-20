@@ -1109,12 +1109,21 @@ body[data-hero="minimal"] .hero h1 {
   z-index: 1;
 }
 
+.work-slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, oklch(0.1 0.02 240 / 0.85) 0%, oklch(0.1 0.02 240 / 0.3) 50%, transparent 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
 .work-overlay {
   position: absolute;
   left: 24px;
   right: 24px;
   bottom: 22px;
-  z-index: 2;
+  z-index: 3;
   text-align: left;
 }
 
@@ -1123,14 +1132,15 @@ body[data-hero="minimal"] .hero h1 {
   font-size: 11px;
   letter-spacing: .12em;
   text-transform: uppercase;
-  color: oklch(0.91 0.03 292 / .78);
+  color: oklch(0.95 0.02 292 / 0.9);
+  text-shadow: 0 2px 8px oklch(0 0 0 / 0.5);
 }
 
 .work-overlay h3 {
   font-size: clamp(23px, 3vw, 38px);
   margin-top: 7px;
   color: #fff;
-  text-shadow: 0 8px 30px oklch(0 0 0 / .45);
+  text-shadow: 0 4px 12px oklch(0 0 0 / 0.6), 0 1px 2px oklch(0 0 0 / 0.5);
 }
 
 .work-slide.is-active {
